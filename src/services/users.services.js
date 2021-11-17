@@ -25,5 +25,31 @@ export default class UserService {
 
   static async insert(obj) {
     // Usar el método create del ORM sequelize
+    try {
+      const result = await users.create(obj);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async update(id, obj) {
+    // Usar el método create del ORM sequelize
+    try {
+      const result = await users.update(obj, { where: { id } });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async delete(id) {
+    // Usar el método create del ORM sequelize
+    try {
+      const result = await users.destroy({ where: { id } });
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 }
