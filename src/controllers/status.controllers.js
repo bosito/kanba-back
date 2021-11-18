@@ -29,7 +29,7 @@ export const postStatus = async (req, res, next) => {
     } = req.body;
 
     // Obtener el último estatus insertado en la tabla
-    const lastId = await StatuService.getLastId();
+    const lastId = await StatuService.getLastStatus();
 
     // Mandamos a llamar al servicio para insertar el estatus
     const user = await StatuService.insert({
