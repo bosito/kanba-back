@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize';
 import Models from '../models/init-models.js'; // Cargando todos los modelos del directorio /models
 
 const { status } = Models();
-const Op = Sequelize.Op;
+const { Op } = Sequelize;
 
 export default class StatuService {
   static async getAll() {
@@ -12,6 +12,7 @@ export default class StatuService {
       const results = await status.findAll({
         attributes: { exclude: ['created_at', 'updated_at'] },
       });
+      // results.forEach( s => )
       return JSON.parse(JSON.stringify(results));
     } catch (error) {
       throw error;
@@ -53,15 +54,26 @@ export default class StatuService {
     }
   }
 
+  static async getFirstStatus() {
+    try {
+      const result = await status.findOne({
+        where: {
+          after_status: 0,
+        },
+      });
+      return JSON.parse(JSON.stringify(result));
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getNextStatus(id) {
     try {
       const result = await status.findOne({
         where: {
-          after_status: id
-        }
+          after_status: id,
+        },
       });
-
-      console.log(result);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       throw error;
@@ -69,40 +81,27 @@ export default class StatuService {
   }
 
   static async update(id, obj) {
-    let result;
     // Usar el método create del ORM sequelize
     try {
-      // Obtenemos el after status del elemento que estamos moviendo
       const statusA = await this.getById(id);
-      // Comprobar si el estatusA es el que está en primer lugar ->
-      if (statusA.after_status === 0) {
-        // Comprobar si el estatusA se va a mover al final
-        const lastStatus = await this.getLastStatus();
-        const nextStatus = await this.getNextStatus(id);
-        // Cuando se mueve al último lugar
-        if (obj.after_status === lastStatus.id) {
-          // Actualizaremos el elemento que dependía de mi estatus para que sea el primer lugar
-          await status.update({ after_status: 0 }, { where: { id: nextStatus.id } });
-          // Actualizar el status que estamos moviendo
-          result = await status.update(obj, { where: { id } });
-        } else if (obj.after_status === nextStatus.id) {
-          /* Actualizaremos el siguiente elemento (status) con 
-          * statusB.after_status = 0 y statusA.after_status = statusB.id
-          * statusC.after_status = statusA.id
-          */
-          // [statusA, statusB, statusC] -> [4, 2, 5] -> [2, 4, 5]
-          console.log('Se está moviendo a la derecha');
-        } else {
-          console.log('Se está moviendo a otro lugar');
-        }
-        // Comprobar si el estatusA se va a mover a la derecha (statusB)
-        // si se moverá a otro sitio
-      } else {
-        // Se está moviendo otro elemento
-      }
+      const statusB = await this.getNextStatus(id);
+      const statusC = await this.getNextStatus(statusB.id);
+      const lastStatus = await this.getLastStatus();
 
-      // const result = await status.update(obj, { where: { id } });
-      return result;
+      if (statusA.after_status === 0 && obj.after_status === statusB.id) {
+        // El primer elemento de la lista de status y se está moviendo a su estatus más proximo
+        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+        await status.update({ after_status: statusB.id }, { where: { id: statusA.id } });
+        await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
+      } else if (statusA.after_status === 0 && obj.after_status !== lastStatus.id) {
+        const statusD = await this.getNextStatus(statusC.id);
+        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+        await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
+        await status.update({ after_status: statusA.id }, { where: { id: statusD.id } });
+      } else if (statusA.after_status === 0 && obj.after_status === lastStatus.id) {
+        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+        await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
+      }
     } catch (error) {
       throw error;
     }
