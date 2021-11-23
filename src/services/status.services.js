@@ -12,7 +12,6 @@ export default class StatuService {
       const results = await status.findAll({
         attributes: { exclude: ['created_at', 'updated_at'] },
       });
-      // results.forEach( s => )
       return JSON.parse(JSON.stringify(results));
     } catch (error) {
       throw error;
@@ -105,11 +104,11 @@ export default class StatuService {
         await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
       } else if (statusA.after_status !== 0 && obj.after_status !== lastStatus.id) {
         statusB = await this.getById(id);
-        statusA = await this.getNextStatus(obj.after_status);
-        statusC = await this.getNextStatus(statusB.id);
+        statusA = await this.getById(statusB.after_status);
+        statusC = await this.getById(obj.after_status);
+        const statusD = await this.getNextStatus(statusC.id);
         await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
         await status.update({ after_status: obj.after_status }, { where: { id: statusB.id } });
-        const statusD = await this.getNextStatus(statusB.id);
         await status.update({ after_status: statusB.id }, { where: { id: statusD.id } });
       } else if (statusA.after_status !== 0 && obj.after_status === lastStatus.id) {
         await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
