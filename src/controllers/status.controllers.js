@@ -49,15 +49,10 @@ export const updateStatus = async (req, res, next) => {
   try {
     let { id } = req.params;
     id = parseInt(id, 10);
-    const status = await StatuService.update(id, req.body);
-    // if (user[0] === 1) {
-    //   return res.json({
-    //     message: 'Se ha actualizado el registro en el sistema',
-    //   });
-    // }
-    // return res.status(400).json({
-    //   message: 'Hubo un problema al actualizar el registro',
-    // });
+    await StatuService.update(id, req.body);
+    return res.json({
+      message: 'Se ha actualizado el registro en el sistema',
+    });
   } catch (error) {
     next(error);
   }

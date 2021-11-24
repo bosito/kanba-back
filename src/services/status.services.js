@@ -82,38 +82,39 @@ export default class StatuService {
   static async update(id, obj) {
     // Usar el método create del ORM sequelize
     try {
-      let statusA = await this.getById(id);
-      let statusB = await this.getNextStatus(id);
-      let statusC = await this.getNextStatus(statusB.id);
+      // let statusA = await this.getById(id);
+      // let statusB = await this.getNextStatus(id);
+      // let statusC = await this.getNextStatus(statusB.id);
       const lastStatus = await this.getLastStatus();
 
-      if (
-        (statusA.after_status === 0 && obj.after_status === statusB.id)
-        || obj.after_status === 0) {
-        // El primer elemento de la lista de status y se está moviendo a su estatus más proximo
-        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
-        await status.update({ after_status: statusB.id }, { where: { id: statusA.id } });
-        await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
-      } else if (statusA.after_status === 0 && obj.after_status !== lastStatus.id) {
-        const statusD = await this.getNextStatus(statusC.id);
-        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
-        await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
-        await status.update({ after_status: statusA.id }, { where: { id: statusD.id } });
-      } else if (statusA.after_status === 0 && obj.after_status === lastStatus.id) {
-        await status.update({ after_status: 0 }, { where: { id: statusB.id } });
-        await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
-      } else if (statusA.after_status !== 0 && obj.after_status !== lastStatus.id) {
-        statusB = await this.getById(id);
-        statusA = await this.getById(statusB.after_status);
-        statusC = await this.getById(obj.after_status);
-        const statusD = await this.getNextStatus(statusC.id);
-        await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
-        await status.update({ after_status: obj.after_status }, { where: { id: statusB.id } });
-        await status.update({ after_status: statusB.id }, { where: { id: statusD.id } });
-      } else if (statusA.after_status !== 0 && obj.after_status === lastStatus.id) {
-        await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
-        await status.update({ after_status: obj.after_status }, { where: { id } });
-      }
+      // if (
+      //   (statusA.after_status === 0 && obj.after_status === statusB.id)
+      //   || obj.after_status === 0) {
+      //   // El primer elemento de la lista de status y se está moviendo a su estatus más proximo
+      //   await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+      //   await status.update({ after_status: statusB.id }, { where: { id: statusA.id } });
+      //   await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
+      // } else if (statusA.after_status === 0 && obj.after_status !== lastStatus.id) {
+      //   const statusD = await this.getNextStatus(statusC.id);
+      //   await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+      //   await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
+      //   await status.update({ after_status: statusA.id }, { where: { id: statusD.id } });
+      // } else if (statusA.after_status === 0 && obj.after_status === lastStatus.id) {
+      //   await status.update({ after_status: 0 }, { where: { id: statusB.id } });
+      //   await status.update({ after_status: obj.after_status }, { where: { id: statusA.id } });
+      // } else if (statusA.after_status !== 0 && obj.after_status !== lastStatus.id) {
+      //   statusB = await this.getById(id);
+      //   statusA = await this.getById(statusB.after_status);
+      //   statusC = await this.getById(obj.after_status);
+      //   const statusD = await this.getNextStatus(statusC.id);
+      //   await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
+      //   await status.update({ after_status: obj.after_status }, { where: { id: statusB.id } });
+      //   await status.update({ after_status: statusB.id }, { where: { id: statusD.id } });
+      // } else if (statusA.after_status !== 0 && obj.after_status === lastStatus.id) {
+      //   await status.update({ after_status: statusA.id }, { where: { id: statusC.id } });
+      //   await status.update({ after_status: obj.after_status }, { where: { id } });
+      // }
+      // return true;
     } catch (error) {
       throw error;
     }
