@@ -1,0 +1,143 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Kanban REST API",
+    "version": "1.0",
+    "description": "Proyecto Kanban"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "Una lista de usuarios"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Se ha agregado un usuario satisfactoriamente"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "El usuario solicitado por su ID"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id del usuario",
+            "example": "2",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      }, 
+      "put": {
+        "tags": ["Users"],
+        "description": "Actualizar un usuario",
+        "responses": {
+          "200": {
+            "description": "Se ha actualizado el usuario en el sistema"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id del usuario",
+            "example": "2",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id del usuario",
+            "example": "2",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "description": "Borrar un usuario en el sistema",
+        "responses": {
+          "200": {
+            "description": "Se ha eliminado el usuario"
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": ["Status"],
+        "description": "Obtener la lista de estatus",
+        "responses": {
+          "200": {
+            "description": "Lista de estatus"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Una contraseña de 8 o más caracteres"
+          }
+        }
+      }
+    }
+  } 
+}
