@@ -16,7 +16,9 @@ export default class users extends Model {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
-            notEmpty: true,
+            notNull: {
+              msg: 'Debes proporcionar el campo nombre',
+            },
           },
         },
         lastname: {

@@ -3,7 +3,7 @@
 import { Sequelize } from 'sequelize';
 import Models from '../models/init-models.js'; // Cargando todos los modelos del directorio /models
 
-const { status } = Models();
+const { status, tasks } = Models();
 const { Op } = Sequelize;
 
 export default class StatuService {
@@ -11,6 +11,15 @@ export default class StatuService {
     try {
       const results = await status.findAll({
         attributes: { exclude: ['created_at', 'updated_at'] },
+        include: [
+          {
+            model: tasks,
+            as: 'tasks',
+            attributes: {
+              exclude: ['created_at', 'updated_at'],
+            },
+          },
+        ],
       });
       return JSON.parse(JSON.stringify(results));
     } catch (error) {

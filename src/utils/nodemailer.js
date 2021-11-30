@@ -1,48 +1,54 @@
 import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 
+const { OAuth2 } = google.auth;
+
 const createTransporter = async () => {
-  // Agregar las credenciales de nuestra aplicación para autenticarnos vía OAUTH 2.0
-  const oauthClient = new google.auth.OAuth2(
-    'client_id',
-    'client_secret',
+  // Configurar las credenciales para el cliente OAuth2
+  const oauthClient = new OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
     'https://developers.google.com/oauthplayground',
   );
 
   oauthClient.setCredentials({
-    refresh_token: '',
+    refresh_token: process.env.REFRESH_TOKEN,
   });
 
   let accessToken = '';
+
+  // eslint-disable-next-line no-useless-catch
   try {
     accessToken = await oauthClient.getAccessToken();
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       type: 'OAuth2',
-      user: 'cuenta@gmail.com',
+      user: process.env.G_USER,
       accessToken,
-      clientId: 'client_id',
-      clientSecret: 'client_secret',
-      refreshToken: 'refresh_token',
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
     },
   });
 
   return transporter;
 };
 
-const sendEmail = async () => {
-  const emailTransporter = await createTransporter();
-  await emailTransporter.sendMail({
-    subject: 'Prueba Academlo',
-    text: 'Esto es una prueba de un correo electronico con Nodemailer',
-    to: 'oscar.islas@academlo.com',
-    from: 'oislasreyes@gmail.com',
+const sendEmail = async (emailOptions) => {
+  const { subject, text, to } = emailOptions;
+  const transporter = await createTransporter();
+  const results = await transporter.sendMail({
+    subject,
+    text,
+    to,
+    from: `Academlo <${process.env.G_USER}>`,
   });
+  return results;
 };
 
-sendEmail();
+export default sendEmail;

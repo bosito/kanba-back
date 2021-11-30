@@ -36,5 +36,6 @@ export default function initModels() {
     status,
     tasks,
     users,
+    sequelize,
   };
 }
