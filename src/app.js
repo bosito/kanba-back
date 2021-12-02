@@ -3,6 +3,7 @@ import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import multer from 'multer';
 import cors from 'cors';
+import apiRoutes from './routes/index.js';
 import userRoutes from './routes/users.routes.js';
 import statusRoutes from './routes/status.routes.js';
 import subsRoutes from './routes/subscription.routes.js';
@@ -51,11 +52,7 @@ app.post('/send-email', async (req, res, next) => {
   }
 });
 
-app.use('/api/v1/', userRoutes);
-app.use('/api/v1/', statusRoutes);
-app.use('/api/v1/', subsRoutes);
-app.use('/api/v1/', tasksRoutes);
-app.use('/api/v1/', customerRoutes);
+app.use('/api/v1/', apiRoutes);
 app.use(handleErrors);
 
 export default app;

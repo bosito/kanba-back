@@ -1,4 +1,5 @@
 import _sequelize from 'sequelize';
+import bcrypt from 'bcryptjs';
 
 const { Model, Sequelize } = _sequelize;
 
@@ -66,6 +67,12 @@ export default class users extends Model {
         },
       },
       {
+        hooks: {
+          beforeCreate: (user) => {
+            const hashPassword = bcrypt.hashSync(user.password, 8);
+            user.password = hashPassword;
+          },
+        },
         sequelize,
         tableName: 'users',
         schema: 'public',

@@ -43,4 +43,13 @@ export default class TaskService {
       throw error;
     }
   }
+
+  static async update(taskObj, id) {
+    try {
+      const result = await tasks.update(taskObj, { where: { id } });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
