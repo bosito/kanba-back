@@ -10,15 +10,15 @@ export default class AuthService {
   static async login(email, password) {
     try {
       const results = await users.findOne({ where: { email } });
-      const user = {
-        id: results.id,
-        firstname: results.firstname,
-        lastname: results.lastname,
-        email: results.email,
-      };
+      const validPassword = results ? bcrypt.compareSync(password, results.password) : false;
       let token = false;
-      const validPassword = bcrypt.compareSync(password, results.password);
       if (results && validPassword) {
+        const user = {
+          id: results.id,
+          firstname: results.firstname,
+          lastname: results.lastname,
+          email: results.email,
+        };
         // Comprobar que la contraseña coincida con la que envía el cliente -> Crear el token JWT
         token = this.signJWT(user);
       }
