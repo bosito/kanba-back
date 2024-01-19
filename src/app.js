@@ -11,7 +11,7 @@ import customerRoutes from './routes/customer.routes.js';
 import tasksRoutes from './routes/tasks.routes.js';
 import handleErrors from './middlewares/error.middleware.js';
 import swaggerDocument from './swagger.json';
-import sendEmail from './utils/nodemailer.js';
+import sendEmail from './utils/nodemailer.js'; 
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
